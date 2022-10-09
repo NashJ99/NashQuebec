@@ -17,7 +17,7 @@ app.get('/', function (req, res) {
     // res.send('Hello ' + userName + ' from Node/Express/Heroku');
 
     client.connect(err => {
-        const collection = client.db("CIS486Nash").collection("NashPapa");
+        const collection = client.db("NashPapa").collection("Papacis486");
         console.log('connected!');
         // perform actions on the collection object
        

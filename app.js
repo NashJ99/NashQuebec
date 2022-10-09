@@ -22,7 +22,7 @@ async function main(){
         console.log("Databases:");
         databasesList.databases.forEach(db => console.log(` - ${db.name}`));
 
-        posts = await client.db("CIS486Nash").collection("NashPapa").findOne();
+        posts = await client.db("NashPapa").collection("Papacis486").findOne();
 
         console.log(posts); 
         
