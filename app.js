@@ -8,94 +8,73 @@ const client = new MongoClient(process.env.MONGO_URI, { useNewUrlParser: true, u
 const app = express()
 let posts = ''; 
 
+const PORT = process.env.PORT || 3000
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-async function main(){
-    try {
-        // Connect to the MongoDB cluster
-        await client.connect();
- 
-        // Make the appropriate DB calls
-        databasesList = await client.db().admin().listDatabases();
- 
-        console.log("Databases:");
-        databasesList.databases.forEach(db => console.log(` - ${db.name}`));
+MongoClient.connect(process.env.MONGO_URI, { useUnifiedTopology: true })
+  .then(client => {
+    console.log('Connected')
+    const db = client.db('NashPapa')
+    const quotesCollection = db.collection('Papacis486')
 
-        posts = await client.db("NashPapa").collection("Papacis486").findOne();
+    app.set('view engine', 'ejs')
+    app.use(bodyParser.urlencoded({ extended: true }))
+    app.use(bodyParser.json())
+    app.use(express.static('public'))
 
-        console.log(posts); 
-        
-        return posts; 
-        // return posts.findOne();
-
-
-    } catch (e) {
-        console.error(e);
-    } finally {
-        await client.close();
-    }
-}
-
-// main().catch(console.error);
-
-
-app.get('/', async function (req, res) {
-    // res.sendFile(path.join(__dirname, "index.html" )); 
-    // res.send('Hello ' + userName + ' from Node/Express/Heroku');
-
-    const result = await main().catch(console.error);
-
-    console.log("results: ", result.title); 
-
-    res.send(`results:  ${ result.title }`); 
-
-    });
-
-
-
+    app.get('/', async (req, res) => {
+        db.collection('name').find().toArray()
+          .then(results => {
+            res.render('index.ejs', { name: results })
+          })
+          .catch(/* ... */)
+      })
     
-
-app.listen(process.env.PORT || 3000,
-  () => console.log(`server is running on port: ${process.env.PORT}` ));
-
-
-
-
-// app.set('view engine', 'ejs');
-// app.get('/', function (req, res) {
-    // res.sendFile(path.join(__dirname, "index.html" )); 
-    // res.send('Hello ' + userName + ' from Node/Express/Heroku');
-
-    // client.connect(err => {
-    //     const collection = client.db("CIS486Nash").collection("NashPapa");
-    //     console.log('connected!');
-        // perform actions on the collection object
-
-        // const result = collection.find( { title: "class"} ); //.toArray();
-        // console.log(result.content);
-           
-        //    res.send(result.content);
-        //    // client.close();
-//    });
-
-       // res.send(`Hello Express from inside my client connect f/n!`); 
-// });
-
-   
-
-   // res.render('index',  {     }    );
-
-
-// app.listen(process.env.PORT || 3000,
-//  () => console.log(`server is running on port: ${process.env.PORT}` ));
-
-
- // const uri = "mongodb+srv://NashJDB1Oct:<NashJDB1Oct>@cis486nash.1xhuwj6.mongodb.net/?retryWrites=true&w=majority";
-// const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-// client.connect(err => {
-//   const collection = client.db("test").collection("devices");
-//   // perform actions on the collection object
-//   console.log('check');
-//   client.close();
-// });
+      app.post('/name', (req, res) => {
+        quotesCollection.insertOne(req.body)
+          .then(result => {
+            res.redirect('/')
+          })
+          .catch(error => console.error(error))
+      })
+      app.post('/name', (req,res) => {
+        console.log(req.body);
+    })
+    app.post('/updateTeam/:id', async (req, res) => {
+        let result = await quotesCollection.findOneAndUpdate(
+        {
+            "_id": ObjectId(req.params.id)
+        },
+        {
+          $set: {
+            name: 'Justin Nash',
+            topic: 'undecided'
+            }
+        }
+      )
+    })
+    .then(result => {
+        console.log(result);
+        res.redirect('/');
+    })
+    .catch(error => console.error(error))
+})
+app.post('/deletename/:id', async (req, res) => 
+{
+    let result = await quotesCollection.findOneAndDelete( 
+        {
+          "_id": ObjectId(req.params.id)
+        }
+      )
+      .then(result => {
+        console.log(result); 
+        res.redirect('/');
+      })
+      .catch(error => console.error(error))
+    })
+    app.listen(process.env.PORT || 3000 , 
+        () => console.log("server running..."));
+    // do not cross
+    

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NashQuebec</title>
+</head>
+<body>
+  <h1> Student status </h1>
+
+  <form action="/name" method="POST">
+    <input type="text" placeholder="name" name="name"> <br>
+    <input type="text" placeholder="class" name="class"> <br>
+    <input type="text" placeholder="topic" name="topic"> <br>
+    <button type="submit">Submit</button>
+  </form>
+
+  <br>
+
+  <ul class = "name">
+    <% for(var i = 0; i < name.length; i++) {%>
+    <li class = "name">
+        <span>Name: <%= name[i].name %></span><br>
+        <span>class: <%= name[i].class %></span><br>
+        <span>topic: <%= name[i].topic %></span><br>
+        <!-- to delete -->
+        <form method="post" action="/deletename/<%= name[i]._id %>">
+          <input type="submit" value = "Delete" onClick="return confirm('confirm`?')" />
+        </form>
+        <form method="post" action="/updatename/<%= name[i]._id %>">
+          <input type="submit" value = "Update" onClick="return confirm('confirm change?')" />
+        </form>
+        <div> <br> </div>
+    </li>
+    <% } %>
+  </ul>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="/index.js"></script>
+
+</html>
