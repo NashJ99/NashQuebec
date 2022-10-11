@@ -2,27 +2,30 @@ require("dotenv").config();
 const express = require('express')
 const path = require('node:path')
 const bodyParser = require('body-parser')
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const client = new MongoClient(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-
+const { MongoClient, ServerApiVersion } = require('mongodb')
+const client = new MongoClient(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 })
+const PORT = process.env.PORT || 3000
 const app = express()
+
 let posts = ''; 
 
-const PORT = process.env.PORT || 3000
-
-app.use(bodyParser.json())
+app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+app.use(express.static('public'))
+
 
 MongoClient.connect(process.env.MONGO_URI, { useUnifiedTopology: true })
   .then(client => {
-    console.log('Connected')
-    const db = client.db('NashPapa')
-    const quotesCollection = db.collection('Papacis486')
+    console.log('Connected');
+    //const db = client.db('NashPapa');
+    // const quotesCollection = db.collection('Papacis486');
 
-    app.set('view engine', 'ejs')
-    app.use(bodyParser.urlencoded({ extended: true }))
-    app.use(bodyParser.json())
-    app.use(express.static('public'))
+    databasesList = client.db().admin().listDatabases();
+ 
+    console.log("Databases:");
+    databasesList.databases.forEach(db => console.log(` - ${db.name}`));
+
 
     app.get('/', async (req, res) => {
         db.collection('name').find().toArray()
@@ -74,6 +77,8 @@ app.post('/deletename/:id', async (req, res) =>
       })
       .catch(error => console.error(error))
     })
+
+
     app.listen(process.env.PORT || 3000 , 
         () => console.log("server running..."));
     // do not cross
