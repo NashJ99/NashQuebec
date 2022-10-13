@@ -10,7 +10,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.get('/', function (req, res) {
   client.connect(err => {
-    const collection = client.db("myFirstDatabase").collection("posts");
+    const collection = client.db("NashPapa").collection("Papacis486");
     console.log('connected!');
     const result = collection.find( { title: "Super Cats"} ); //.toArray();
          console.log(result.content);
